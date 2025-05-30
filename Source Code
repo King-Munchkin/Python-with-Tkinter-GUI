@@ -1,0 +1,163 @@
+import gui
+
+calculator = gui.Gui()
+calculator.start()
+
+
+_______________________________________________________________
+
+
+import tkinter as tk
+import math
+class Gui():
+
+    def __init__(self):
+        self.expression = ""
+        self.gui = tk.Tk()
+        self.gui.configure(background="light green")
+        self.gui.title("Simple Calculator")
+        self.gui.geometry("270x150")
+
+        self.equation = tk.StringVar()
+
+        self.expression_field = tk.Entry(self.gui, textvariable=self.equation)
+
+        self.expression_field.grid(columnspan=4, ipadx=70)
+
+        button1 = tk.Button(self.gui, text=' 1 ', command=lambda: self.press(1), height=1, width=7)
+        button1.grid(row=2, column=0)
+
+        button2 = tk.Button(self.gui, text=' 2 ', command=lambda: self.press(2), height=1, width=7)
+        button2.grid(row=2, column=1)
+
+        button3 = tk.Button(self.gui, text=' 3 ', command=lambda: self.press(3), height=1, width=7)
+        button3.grid(row=2, column=2)
+
+        button4 = tk.Button(self.gui, text=' 4 ', command=lambda: self.press(4), height=1, width=7)
+        button4.grid(row=3, column=0)
+
+        button5 = tk.Button(self.gui, text=' 5 ', command=lambda: self.press(5), height=1, width=7)
+        button5.grid(row=3, column=1)
+
+        button6 = tk.Button(self.gui, text=' 6 ', command=lambda: self.press(6), height=1, width=7)
+        button6.grid(row=3, column=2)
+
+        button7 = tk.Button(self.gui, text=' 7 ', command=lambda: self.press(7), height=1, width=7)
+        button7.grid(row=4, column=0)
+
+        button8 = tk.Button(self.gui, text=' 8 ',command=lambda: self.press(8), height=1, width=7)
+        button8.grid(row=4, column=1)
+
+        button9 = tk.Button(self.gui, text=' 9 ', command=lambda: self.press(9), height=1, width=7)
+        button9.grid(row=4, column=2)
+
+        button0 = tk.Button(self.gui, text=' 0 ', command=lambda: self.press(0), height=1, width=7)
+        button0.grid(row=5, column=0)
+
+        plus = tk.Button(self.gui, text=' + ', command=lambda: self.press("+"), height=1, width=7)
+        plus.grid(row=2, column=3)
+
+        minus = tk.Button(self.gui, text=' - ', command=lambda: self.press("-"), height=1, width=7)
+        minus.grid(row=3, column=3)
+
+        multiply = tk.Button(self.gui, text=' * ', command=lambda: self.press("*"), height=1, width=7)
+        multiply.grid(row=4, column=3)
+
+        divide = tk.Button(self.gui, text=' / ', command=lambda: self.press("/"), height=1, width=7)
+        divide.grid(row=5, column=3)
+
+        equal = tk.Button(self.gui, text=' = ',command=self.equalpress, height=1, width=7)
+        equal.grid(row=5, column=2)
+
+        clear = tk.Button(self.gui, text='Clear',command=self.clear, height=1, width=7)
+        clear.grid(row=5, column=1)
+
+        decimal = tk.Button(self.gui, text='.',command=lambda: self.press('.'), height=1, width=7)
+        decimal.grid(row=6, column=0)
+
+        delbutton = tk.Button(self.gui, text = 'del', command = self.delete, height=1, width=7)
+        delbutton.grid(row=6, column =1)
+
+        Cbutton = tk.Button(self.gui, text = 'nCr', command =self.combination, height = 1, width =7)
+        Cbutton.grid(row=6, column = 2)
+
+        Pbutton = tk.Button(self.gui, text = 'nPr', command =self.permuntation, height = 1, width =7)
+        Pbutton.grid(row=6, column = 3)
+
+    def combination(self):
+        self.expression += "C"
+        self.equation.set(self.expression)
+
+    def permuntation(self):
+        self.expression += "P"
+        self.equation.set(self.expression)
+
+    def delete(self):
+        current_text = self.expression_field.get()
+        self.equation.set(current_text[:-1])
+        self.expression = current_text[:-1]
+
+    def start(self):
+        self.gui.mainloop()
+
+    def equalpress(self):
+        try:
+            # Check for invalid combinations like '58C6P9'
+            if any(c.isalpha() for c in self.expression):
+                # This is to catch invalid patterns where a letter (C or P) appears with numbers that don't form valid combinations/permutations
+                if 'C' in self.expression and 'P' in self.expression:
+                    self.equation.set(" error ")
+                    self.expression = ""
+                    return  # Early exit to prevent further calculations
+
+            # Handle valid combinations and permutations
+            if 'C' in self.expression or 'P' in self.expression:
+                if 'C' in self.expression:
+                    idklol = self.expression.find('C')
+                    i = idklol - 1
+                    while i >= 0 and self.expression[i].isdigit():
+                        i -= 1
+                    number_before_C = int(self.expression[i + 1:idklol])
+
+                    j = idklol + 1
+                    while j < len(self.expression) and self.expression[j].isdigit():
+                        j += 1
+                    number_after_C = int(self.expression[idklol + 1:j])
+
+                    total = math.comb(number_before_C, number_after_C)
+                    self.equation.set(total)
+                    self.expression = ""
+
+                elif 'P' in self.expression:
+                    idklol = self.expression.find('P')
+                    i = idklol - 1
+                    while i >= 0 and self.expression[i].isdigit():
+                        i -= 1
+                    number_before_P = int(self.expression[i + 1:idklol])
+
+                    j = idklol + 1
+                    while j < len(self.expression) and self.expression[j].isdigit():
+                        j += 1
+                    number_after_P = int(self.expression[idklol + 1:j])
+
+                    total = math.perm(number_before_P, number_after_P)
+                    self.equation.set(total)
+                    self.expression = ""
+
+            # Evaluate normal expressions
+            else:
+                total = str(eval(self.expression))
+                self.equation.set(total)
+                self.expression = ""
+
+        except Exception:
+            self.equation.set(" error ")
+            self.expression = ""
+
+    def press(self, num):
+        self.expression += str(num)
+        self.equation.set(self.expression)
+
+    def clear(self):
+        self.expression = ""
+        self.equation.set("")
